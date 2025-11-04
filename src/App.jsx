@@ -1,28 +1,51 @@
-import { useState } from 'react'
+import { useRef, useState, useEffect } from 'react';
+import Hero from './components/Hero';
+import About from './components/About';
+import Showcase from './components/Showcase';
+import Contact from './components/Contact';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const workRef = useRef(null);
+  const contactRef = useRef(null);
+  const [darkMode, setDarkMode] = useState(true);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) root.classList.add('dark');
+    else root.classList.remove('dark');
+  }, [darkMode]);
+
+  const scrollTo = (ref) => {
+    if (!ref?.current) return;
+    ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+    <div className="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-[#0b0e17] dark:text-white">
+      <Hero
+        onScrollToWork={() => scrollTo(workRef)}
+        onScrollToContact={() => scrollTo(contactRef)}
+        darkMode={darkMode}
+        toggleDark={() => setDarkMode((v) => !v)}
+      />
 
-export default App
+      <About />
+
+      <div ref={workRef}>
+        <Showcase />
+      </div>
+
+      <div ref={contactRef}>
+        <Contact />
+      </div>
+
+      <footer className="mx-auto w-full max-w-6xl px-6 pb-10">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <div className="mt-4 flex flex-col items-center justify-between gap-3 text-sm text-neutral-400 sm:flex-row">
+          <span>© {new Date().getFullYear()} Ayush Nema</span>
+          <span className="opacity-80">Built with curiosity — Mechatronics × AI</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
